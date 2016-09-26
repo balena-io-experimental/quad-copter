@@ -1,0 +1,56 @@
+# Base-image for python on any machine using a template variable
+# See more about dockerfile templates here: http://docs.resin.io/deployment/docker-templates/
+# See more about resin base images here: http://docs.resin.io/runtime/resin-base-images/
+FROM resin/%%RESIN_MACHINE_NAME%%-python:3.5
+
+# Enable systemd init system
+ENV INITSYSTEM on
+
+# Add cross compilation repository
+RUN echo deb http://emdebian.org/tools/debian/ jessie main >> /etc/apt/sources.list.d/crosstools.list
+RUN curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo apt-key add -
+
+# Use apt-get to install dependencies
+RUN apt-get update && apt-get install -yq \
+    bison \
+    cmake \
+    flex \
+    git \
+    libavahi-client-dev \
+    libcdk5-dev \
+    liblttng-ust-dev \
+    libxml2 \
+    libxml2-dev \
+    pkg-config && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Checkout ardupilot source
+RUN git clone https://github.com/ArduPilot/ardupilot.git && \
+    cd ardupilot && \
+    git submodule update --init
+
+# Checkout and build libiio source (ardupilot dependency)
+RUN git clone https://github.com/analogdevicesinc/libiio.git && \
+    cd libiio && \
+    cmake ./ && \
+    make all && \
+    make install
+
+# Instll future (ardupilot dependency)
+RUN pip install future
+
+# Set the working directory
+WORKDIR /usr/src/app/ardupilot
+
+# Build ardupilot
+RUN ./waf configure --board pxfmini
+RUN ./waf --targets bin/arducopter-quad
+
+# Set the working directory
+WORKDIR /usr/src/app/ardupilot/build/pxfmini/bin
+
+# Start arducopter
+CMD modprobe i2c-dev && ./arducopter-quad
