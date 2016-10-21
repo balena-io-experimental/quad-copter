@@ -10,6 +10,9 @@ ENV INITSYSTEM on
 RUN echo deb http://emdebian.org/tools/debian/ jessie main >> /etc/apt/sources.list.d/crosstools.list
 RUN curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo apt-key add -
 
+# Get node
+RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+
 # Use apt-get to install dependencies
 RUN apt-get update && apt-get install -yq \
     bison \
@@ -27,6 +30,7 @@ RUN apt-get update && apt-get install -yq \
     liblttng-ust-dev \
     libxml2 \
     libxml2-dev \
+    nodejs \
     pkg-config \
     rfkill && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
