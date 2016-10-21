@@ -14,14 +14,21 @@ RUN curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo 
 RUN apt-get update && apt-get install -yq \
     bison \
     cmake \
+    dnsmasq \
     flex \
     git \
+    hostapd \
+    iproute2 \
+    iw \
     libavahi-client-dev \
     libcdk5-dev \
+    libdbus-1-dev \
+	libexpat-dev \
     liblttng-ust-dev \
     libxml2 \
     libxml2-dev \
-    pkg-config && \
+    pkg-config \
+    rfkill && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
@@ -50,7 +57,21 @@ RUN ./waf configure --board pxfmini
 RUN ./waf --targets bin/arducopter-quad
 
 # Set the working directory
-WORKDIR /usr/src/app/ardupilot/build/pxfmini/bin
+WORKDIR /usr/src/app
 
-# Start arducopter
-CMD modprobe i2c-dev && ./arducopter-quad
+# Copy all
+COPY . .
+
+# Install hotspot dependencies
+RUN JOBS=MAX npm install --unsafe-perm --production \
+	&& npm cache clean
+
+# Install hotspot dependencies
+RUN ./node_modules/.bin/bower --allow-root install \
+	&& ./node_modules/.bin/bower --allow-root cache clean
+
+# Compile hotspot
+RUN ./node_modules/.bin/coffee -c ./src
+
+# Start
+CMD bash start
