@@ -15,6 +15,7 @@ exports.start = ->
 		address=/#/#{config.gateway}
 		dhcp-range=#{config.dhcpRange}
 		bind-interfaces
+
 		"""
 
 	console.log('Starting dnsmasq..')

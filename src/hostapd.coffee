@@ -14,6 +14,7 @@ exports.start = ->
 		ssid=#{config.ssid}
 		interface=#{config.iface}
 		channel=6
+
 		"""
 
 	if config.passphrase?
@@ -21,6 +22,7 @@ exports.start = ->
 			"""
 			wpa=2
 			wpa_passphrase=#{config.passphrase}
+
 			"""
 
 	console.log('Starting hostapd..')

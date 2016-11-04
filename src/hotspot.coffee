@@ -21,17 +21,13 @@ exports.start = ->
 	systemd.stop('connman.service')
 	.delay(2000)
 	.then ->
-		console.log('1')
 		execAsync('rfkill unblock wifi')
 	.then ->
-		console.log('2')
 		# XXX: detect if the IP is already set instead of doing `|| true`
 		execAsync("ip addr add #{config.gateway}/24 dev #{config.iface} || true")
 	.then ->
-		console.log('3')
 		hostapd.start()
 	.then ->
-		console.log('4')
 		dnsmasq.start()
 
 exports.stop = ->
