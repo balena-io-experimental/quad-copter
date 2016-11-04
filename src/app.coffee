@@ -1,7 +1,7 @@
 hotspot = require './hotspot'
 gpio = require 'rpi-gpio'
 
-gpio.setup(21, gpio.DIR_IN, gpio.EDGE_BOTH)
+gpio.setup(40, gpio.DIR_IN, gpio.EDGE_BOTH)
 
 # if process.argv[2] == 'start'
 #     console.log('Starting hotspot')
