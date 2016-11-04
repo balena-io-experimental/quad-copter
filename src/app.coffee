@@ -1,10 +1,12 @@
 hotspot = require './hotspot'
 gpio = require 'rpi-gpio'
 
-gpio.setup 40, gpio.DIR_IN, gpio.EDGE_BOTH
+readInput = ->
+  gpio.read 40, (err, value) ->
+    console.log 'The value is ' + value
+    return
 
-gpio.read 40, (err, value) ->
-  console.log 'The value is ' + value
+gpio.setup 40, gpio.DIR_IN, gpio.EDGE_BOTH, readInput
 
 gpio.on 'change', (channel, value) ->
   console.log 'Channel ' + channel + ' value is now ' + value
