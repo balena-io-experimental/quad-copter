@@ -1,9 +1,10 @@
 #!/bin/bash
 
 export DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
+node src/app.js
 
-modprobe i2c-dev
+#modprobe i2c-dev
 
-npm start -- start
+#npm start -- start
 
 #./usr/src/app/ardupilot/build/pxfmini/bin/arducopter-quad -B udp:11.0.0.2:6000
