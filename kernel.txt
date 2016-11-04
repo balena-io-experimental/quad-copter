@@ -1,0 +1,27 @@
+git clone --recursive https://github.com/resin-os/resin-raspberrypi.git
+cd resin-raspberrypi
+git checkout tags/v1.16.0
+git submodule update --recursive
+
+
+./resin-yocto-scripts/build/barys -n -d -m raspberrypi3
+source layers/poky/oe-init-build-env
+MACHINE=raspberrypi3 bitbake virtual/kernel -c patch
+
+cd tmp/work-shared/raspberrypi3/kernel-source
+cat ~/Downloads/patch-4.1.27-rt30.patch | patch -p1
+cd ../../../../
+
+MACHINE=raspberrypi3 bitbake virtual/kernel -c menuconfig
+
+
+
+MACHINE=raspberrypi3 bitbake resin-image
+
+
+// cd layers/meta-openembedded && git checkout krogoth && cd ../../
+// cd layers/poky && git checkout krogoth && cd ../../
+// cd layers/meta-raspberrypi && git checkout krogoth && cd ../../
+// cd layers/meta-resin && git checkout nm_enable_introspection && cd ../../
+
+// ./resin-yocto-scripts/build/barys -n -d --resinio -m raspberrypi3
