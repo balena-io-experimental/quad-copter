@@ -20,9 +20,14 @@ gpio.setup(40, gpio.DIR_IN, gpio.EDGE_BOTH)
 
 
 gpio.on 'change', (channel, value) ->
-  console.log 'Channel ' + channel + ' value is now ' + value
-  return
- 
-# gpio.on('change', function(channel, value) {
-#     console.log('Channel ' + channel + ' value is now ' + value);
-# });
+    console.log 'Channel ' + channel + ' value is now ' + value
+    if value == true
+        console.log('Starting hotspot')
+        hotspot.start()
+        .then ->
+            return
+    else
+        console.log('Stopping hotspot')
+        hotspot.stop()
+        .then ->
+            return
